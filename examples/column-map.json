@@ -1,0 +1,7 @@
+{
+  "description": ["Asset Name", "Description"],
+  "kind": ["Asset Category", "Category"],
+  "institution": ["Institution"],
+  "account_ref": ["Account Number"],
+  "dod_value": ["Value at Date of Death", "Date of Death Value"]
+}

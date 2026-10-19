@@ -1,114 +1,113 @@
-<h1 align="center">Estate Administration for Claude Code</h1>
+# Estate Administration for Claude Code
 
-<p align="center">
-  <strong>The open-source estate administration system that is just a database and Claude Code.</strong>
-</p>
+Know which estates can distribute, which claim notices are about to lapse and how much each estate account holds. Your estates, assets, debts, beneficiaries, claims and estate accounts live in a database you own. MIT licensed. Built by Enterprise DNA.
 
-<p align="center">
-  Created by <a href="https://www.enterprisedna.co"><strong>Enterprise DNA</strong></a>. Free and open source. Works with Claude Code, Codex, OpenCode or Cursor.
-</p>
+| Do it yourself | We customise it | We run it for you |
+|---|---|---|
+| Free. Install, try the demo and import an Estateably inventory. | Your fields, your rules, your letters, your Estateably files brought across. | Installed and operated through Omni by Enterprise DNA. One setup fee, then a retainer. |
+| [Quick start](#quick-start) | [Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_campaign=estateably&utm_medium=readme) | [Talk to Sam](https://enterprisedna.co/omni/book/?offer=replace-software&utm_campaign=estateably&utm_medium=readme) |
 
-<!-- three-doors -->
-<table align="center">
-  <tr>
-    <td align="center"><strong>Do it yourself</strong><br/>Clone it, run it, own it. Free, MIT.<br/><a href="#quick-start">Quick start</a></td>
-    <td align="center"><strong>We customise it</strong><br/>Your fields, your rules, your Estateably data brought across.<br/><a href="https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=estateably">Book a call</a></td>
-    <td align="center"><strong>We run it for you</strong><br/>Installed, connected and operated inside Omni. Setup fee, then a retainer.<br/><a href="https://enterprisedna.co/omni/instead-of/estateably?utm_source=github&utm_medium=readme&utm_campaign=estateably">How it works</a></td>
-  </tr>
-</table>
+Estateably's Pro platform plan lists US$1,083 a month billed annually, US$12,996 a year, for 50 new files a year. Extra files cost US$320 each on a platform plan. [Vendor pricing](https://estateably.com/pricing), checked 19 October 2026. No verified customer invoice is claimed.
 
-<p align="center">
-  <a href="#what-is-this">What is this</a> &bull;
-  <a href="#why-no-front-end">Why no front end</a> &bull;
-  <a href="#quick-start">Quick start</a> &bull;
-  <a href="#the-commands">Commands</a> &bull;
-  <a href="#instead-of-estateably">Instead of Estateably</a> &bull;
-  <a href="#want-it-installed-and-run-for-you">Installed for you</a> &bull;
-  <a href="#license">License</a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Node-20+-339933?style=flat-square" alt="Node 20+" />
-  <img src="https://img.shields.io/badge/PostgreSQL-any-336791?style=flat-square" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/PGlite-embedded-3ecf8e?style=flat-square" alt="PGlite" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
-
----
-
-## What is this
-
-Estate Administration for Claude Code does the job you pay Estateably for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Estateably dashboard cannot.
-
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Estateably per year, all in, with a source. -->
-
-Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=estateably).
-
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
-
-## Why no front end
-
-- The front end was only ever there because the database was hard to talk to. That is no longer true.
-- Your data sits in plain Postgres tables you own. Any tool can read them. No export, no lock-in.
-- No seats, no tiers, no add-ons. Read [docs/why-no-front-end.md](docs/why-no-front-end.md) for the honest trade-offs too.
+This is the estate administration desk of a law firm, an accounting practice or a trustee company: from the date of death to the final distribution. It tracks the grant, the assets to collect, the debts to pay, the beneficiaries and their shares, claims against the estate and the estate account, and it checks each estate against the distribution rules for New Zealand and New South Wales.
 
 ## Quick start
-
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
 
 ```bash
 git clone https://github.com/Enterprise-DNA-OS/estate-administration-for-claude-code.git
 cd estate-administration-for-claude-code
 npm install
+npm test
 npm run demo
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Use Node 20 or later. Tests and the demo use temporary fictional databases and remove them afterwards. For persistent demo data run `npm run seed`. For real work run `npm run migrate` and do not seed. Leave `DATABASE_URL` unset to use the embedded PGlite database in `.data/`, or set it to a private Postgres database. Keep the database, backups, exports and drafts private: they hold personal information about the deceased and their family.
 
-### Use it with your own Postgres or Supabase
+Open the folder in Claude Code, Codex, OpenCode or Cursor and type `/attention`. Every agent uses the same commands. The code does not call any paid model service.
 
-Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same commands, shared data, no per-seat fee.
+```bash
+node scripts/estates.mjs attention
+node scripts/estates.mjs windows
+node scripts/estates.mjs position --json
+npm run view
+npm run docs
+```
 
-## The commands
+Three dashboards (this week, distribution windows, money held) and three documents (estate accounts, beneficiary statements, the date-of-death inventory) render as HTML in your brand. Change the name, colours and logo in `brand.json`.
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
+## The weekly rituals
 
 | Command | What it does |
 |---|---|
-| `/...` | ... |
+| `/attention` | Overdue tasks, assets not collected 90 days after the grant, claim notices that lapse in 14 days, missing grants, quiet files, estates ready to distribute |
+| `/windows` | When each estate is protected for distribution and when its claims period ends |
+| `/position` | Each estate account: receipts, payments, distributions, cash held and unpaid debts |
+| `/compliance` | Breaches, holds and what is due against the rules in [docs/compliance.md](docs/compliance.md), with sources |
+| `/weekly-review` | The Monday review, written to `drafts/` from attention, windows and money held |
+| `/draft-institution-letter` | A letter to a bank, registry or fund asking for the balance and release requirements |
+| `/draft-beneficiary-update` | An update for beneficiaries from the estate account |
 
-## Instead of estateably
+The working commands: `/add-estate`, `/record-grant`, `/add-beneficiary`, `/check-identity`, `/add-asset`, `/notify`, `/collect`, `/transfer`, `/add-liability`, `/pay`, `/expense`, `/record-claim`, `/update-claim`, `/record-notice`, `/distribute`, `/close`, `/add-task`, `/done`, `/log`, `/status`. The reads: `/estates`, `/history`, `/assets`, `/liabilities`, `/beneficiaries`, `/claims`, `/tasks`, `/ledger`, `/insights`. Plus `/import`, `/export`, `/view`, `/documents`, `/new-view` and `/customise`. 42 commands in all; [docs/cli.md](docs/cli.md) lists every option.
 
-<!-- TODO(author): how to bring data across from Estateably; link docs/replace-estateably.md -->
+Names match case-insensitively. A partial name or reference works when it is unique; when it is not, the command lists the candidates and stops.
 
-## Architecture
+## The distribution gate
 
+`/distribute` refuses when:
+
+- the estate is not protected for distribution (inside six months of an NZ grant, a live claim, no NSW notice of intended distribution, or a state with no configured rule), unless the advice relied on is recorded with `--reason`, which `/compliance` then reports;
+- the distribution would leave less cash than the unpaid debts;
+- the beneficiary is a minor and no trustee is named, or an adult beneficiary's identity check is not recorded.
+
+The software records and checks; the responsible lawyer decides. It is not legal advice, it does not move money, and it does not decide whether a claim is valid.
+
+## Bring your Estateably files
+
+In Estateably, open an estate's Inventory module, choose Reports, then Export Inventory. Save the general inventory sheet as CSV and import it into the matching estate, dry run first:
+
+```bash
+node scripts/estates.mjs import estateably examples/estateably-inventory.csv --estate=EST-004 --actor="Your name" --dry-run
 ```
-estate-administration-for-claude-code/
-  CLAUDE.md                 how the operator wants this run (routing table + house rules)
-  AGENTS.md                 the same, for Codex / OpenCode / Cursor / Gemini CLI
-  .claude/commands/         the slash commands
-  scripts/                  the CLI the commands drive
-  scripts/lib/db.mjs        one adapter: DATABASE_URL (pg) or embedded PGlite
-  supabase/migrations/      plain SQL schema
-  supabase/seed.sql         demo data
-  docs/                     the thesis and the migration guide
-```
 
-## Built for coding agents
+The [switching guide](docs/replace-estateably.md) covers headings, what maps and what does not come across. Imports are atomic: identical rows are skipped, a conflicting row stops the whole file, and every source column is kept with the asset.
 
-The database, CLI and command recipes work with Claude Code, Codex, OpenCode or Cursor. Ask your coding agent for a new command and have it implement and test the change against the same records.
+## Ten questions answered from your records
 
-## Contributing
+`/insights` runs all ten today. They combine your own records; they are not a claim that Estateably cannot produce a similar report.
 
-Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a slash command per recurring job, no front end.
+1. Which estates could distribute today, and how much is free after the unpaid debts?
+2. Which assets are still uncollected more than 90 days after the grant?
+3. Which claim notices are live, and when does each lapse?
+4. Which open estates are past their claims period but not yet finalised?
+5. Which minor beneficiaries have a share in an estate that is administering or distributing?
+6. Which open estates have residuary shares that do not add to 100%?
+7. How much cash is held across open estates, by responsible person?
+8. Which estates have unpaid debts after a distribution was made?
+9. Which open files have had no recorded activity for 30 days?
+10. Which assets realised less than their date-of-death value, and by how much?
+
+## Your first hour: ten things to ask for
+
+1. What needs my attention this week?
+2. Which estates can we distribute from now?
+3. When does the claim notice on the Kingi estate lapse?
+4. Draft the letter to Kauri Registry for the Hart share portfolio.
+5. Show the Hart estate account.
+6. Write the beneficiary update for the Hart estate.
+7. Record that the probate for Peter Lowe was granted today.
+8. Put our firm's name and logo on the estate accounts.
+9. Add a field for the deceased's IRD or tax file number through /customise.
+10. Add a page of every estate by responsible lawyer through /new-view.
+
+## Verification
+
+`npm test` runs 161 checks on a temporary database: migrations, repeatable seed data, every read and write, the distribution gate, claim notices lapsing and staying live, NSW notice periods, unconfigured states, closing an estate, import repeats and rollback, drafts, export, the append-only activity log, read-only views, row security for unrelated database roles, and escaped HTML. Set `TEST_DATABASE_URL` to run the same checks on an empty Postgres database.
+
+Read the [operating rules](CLAUDE.md), the [rules and sources](docs/compliance.md), the [selection evidence](docs/research.md) and [why there is no front end](docs/why-no-front-end.md).
 
 ## Want it installed and run for you?
 
-Enterprise DNA installs Estate Administration for Claude Code for your business, migrates your Estateably data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
-
-- Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=estateably)
-- Read more: [enterprisedna.co/omni/instead-of/estateably](https://enterprisedna.co/omni/instead-of/estateably?utm_source=github&utm_medium=readme&utm_campaign=estateably)
+Enterprise DNA installs Estate Administration for Claude Code for your practice, brings your Estateably files across, adds your letters and rules, and runs it for you as part of Omni. One setup fee, then a monthly retainer. [Book a call](https://enterprisedna.co/omni/book/?offer=replace-software&utm_campaign=estateably&utm_medium=readme).
 
 ## License
 

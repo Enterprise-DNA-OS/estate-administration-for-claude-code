@@ -2,12 +2,43 @@
   {
     "name": "week",
     "title": "This week",
-    "subtitle": "Estate Administration for Claude Code: what needs attention, rendered by npm run view",
+    "subtitle": "What needs a person: overdue tasks, uncollected assets, claim notices, quiet files",
     "sections": [
       {
         "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "note": "From v_attention. Days are counted from the date shown; negative means still to come.",
+        "sql": "select ref, owner, item, detail, date, days from v_attention order by days desc"
+      },
+      {
+        "title": "Open tasks",
+        "sql": "select e.ref, t.title, t.owner, t.due_on from tasks t join estates e on e.id = t.estate_id where t.done_on is null order by t.due_on nulls last"
+      }
+    ]
+  },
+  {
+    "name": "windows",
+    "title": "Distribution windows",
+    "subtitle": "When each open estate can distribute, and when its claims period ends",
+    "sections": [
+      {
+        "title": "Open estates",
+        "note": "Rules and sources: docs/compliance.md. Other states show 'rule not configured' until you add their rule.",
+        "sql": "select ref, deceased_name as deceased, jurisdiction, grant_date, protected_from, claim_period_ends, live_claims, window_status from v_windows where status <> 'closed' order by ref"
+      },
+      {
+        "title": "Claims and notices of intention",
+        "sql": "select ref, claimant, kind, status, notice_received_on, filed_on, served_on, lapses_on, live from v_claims_live order by live desc, ref"
+      }
+    ]
+  },
+  {
+    "name": "money",
+    "title": "Money held",
+    "subtitle": "Cash in each estate account against the debts still to pay",
+    "sections": [
+      {
+        "title": "Estate accounts",
+        "sql": "select ref, deceased_name as deceased, responsible, currency, receipts_cents, payments_cents, distributed_cents, cash_held_cents, unpaid_liabilities_cents, assets_to_collect from v_position where status <> 'closed' order by cash_held_cents desc"
       }
     ]
   }

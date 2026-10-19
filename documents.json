@@ -1,11 +1,37 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
+    "name": "estate-accounts",
+    "title": "Estate accounts",
+    "for_each": "select id, ref || ' ' || deceased_name as name from estates order by ref",
     "file": "name",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      { "title": "Summary", "sql": "select e.deceased_name as deceased, e.date_of_death, e.grant_date, e.currency, receipts_cents, payments_cents, distributed_cents, cash_held_cents from v_position p join estates e on e.id = p.estate_id where p.estate_id = $1" },
+      { "title": "Receipts", "sql": "select l.occurred_on as date, l.description, e.currency, l.amount_cents from ledger l join estates e on e.id = l.estate_id where l.estate_id = $1 and l.kind = 'receipt' order by l.occurred_on" },
+      { "title": "Payments", "sql": "select l.occurred_on as date, l.description, e.currency, l.amount_cents from ledger l join estates e on e.id = l.estate_id where l.estate_id = $1 and l.kind = 'payment' order by l.occurred_on" },
+      { "title": "Distributions", "sql": "select l.occurred_on as date, b.name as beneficiary, l.description, e.currency, l.amount_cents from ledger l join estates e on e.id = l.estate_id join beneficiaries b on b.id = l.beneficiary_id where l.estate_id = $1 and l.kind = 'distribution' order by l.occurred_on" },
+      { "title": "Debts still to pay", "note": "Provided for before any further distribution.", "sql": "select li.creditor, li.description, li.status, e.currency, li.amount_cents from liabilities li join estates e on e.id = li.estate_id where li.estate_id = $1 and li.status <> 'paid' and li.status <> 'written_off' order by creditor" }
+    ]
+  },
+  {
+    "name": "beneficiary-statement",
+    "title": "Beneficiary statement",
+    "for_each": "select b.id, e.ref || ' ' || b.name as name from beneficiaries b join estates e on e.id = b.estate_id order by e.ref, b.name",
+    "file": "name",
+    "sections": [
+      { "title": "Your entitlement", "sql": "select e.deceased_name as estate_of, b.name, round(b.residuary_share_bps / 100.0, 2) as residuary_share_pct, b.specific_gift from beneficiaries b join estates e on e.id = b.estate_id where b.id = $1" },
+      { "title": "Paid to you", "sql": "select l.occurred_on as date, l.description, e.currency, l.amount_cents from ledger l join estates e on e.id = l.estate_id where l.beneficiary_id = $1 order by l.occurred_on" },
+      { "title": "Estate position today", "sql": "select p.currency, p.receipts_cents, p.payments_cents, p.distributed_cents, p.cash_held_cents, p.unpaid_liabilities_cents, w.window_status as distribution from beneficiaries b join v_position p on p.estate_id = b.estate_id join v_windows w on w.estate_id = b.estate_id where b.id = $1" }
+    ]
+  },
+  {
+    "name": "inventory",
+    "title": "Statement of assets and liabilities at date of death",
+    "for_each": "select id, ref || ' ' || deceased_name as name from estates order by ref",
+    "file": "name",
+    "sections": [
+      { "title": "Assets in the estate", "sql": "select a.description, a.kind, a.institution, a.account_ref, a.status, e.currency, a.dod_value_cents from assets a join estates e on e.id = a.estate_id where a.estate_id = $1 and not a.passes_outside_estate order by a.kind, a.description" },
+      { "title": "Assets passing outside the estate", "note": "Joint accounts and nominated benefits. Listed for completeness; not collected by the estate.", "sql": "select a.description, a.kind, a.institution, e.currency, a.dod_value_cents from assets a join estates e on e.id = a.estate_id where a.estate_id = $1 and a.passes_outside_estate order by a.description" },
+      { "title": "Liabilities", "sql": "select li.creditor, li.description, li.kind, li.status, e.currency, li.amount_cents from liabilities li join estates e on e.id = li.estate_id where li.estate_id = $1 order by li.creditor" }
     ]
   }
 ]

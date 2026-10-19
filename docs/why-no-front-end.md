@@ -1,24 +1,19 @@
 # Why there is no front end
 
-Estateably is a database with a subscription. The tables underneath it are ordinary: a few entities, a few relationships, a handful of workflows you repeat every week. What you pay for is the layer on top that lets people who do not write SQL get at those tables. Screens, filters, dashboards, forms.
-
-That layer used to be the whole product, because talking to a database was hard. It is not hard any more. Open this folder in Claude Code, describe what you want, and it writes the query, runs it, and explains the answer. Ask a question the dashboard never had a chart for and you still get an answer.
+An estate file is a handful of records: the deceased, the grant, the assets, the debts, the beneficiaries, the claims and an account of money in and out. What a subscription adds is the screens and forms on top. Those screens existed because the records were hard to ask about. Open this folder in Claude Code and ask "which estates can we distribute from this week?" and the answer comes from your own records, with the rule that decided it.
 
 ## What you gain
 
-- **Better answers.** A dashboard shows what the vendor decided to chart. Here you ask your own question, in your own words, and get it answered against your own data.
-- **No seats.** Everyone who needs to look can look. The bill does not grow with headcount.
-- **Your data in your Postgres.** Plain tables. Back them up, query them from anything, leave any time. There is no export step because there is nothing to leave.
-- **A process that matches you.** When your way of working changes, you add a command. You do not wait for a feature request to clear.
+- **Answers to your own questions.** The ten in the README work today; the next one is a sentence away.
+- **No file allowance.** The bill does not grow with the number of estates you open.
+- **Your records in your database.** Plain records you can back up, query and keep after the matter closes.
+- **Your rules.** NZ and NSW distribution windows are built in. Add your own checks, letters and fields with /customise.
 
-## What you give up
+## What a screen gives that this does not
 
-- **A visual board.** Stages are a table you ask about, not cards you drag.
-- **A phone app.** It runs where Claude Code runs.
-- **A vendor help desk.** This is open source. Enterprise DNA supports the installed version for businesses that want someone to call.
+- **Forms for staff who will not type a request.** Someone has to be comfortable asking in plain language.
+- **Court form generation and e-filing.** Not in the free version.
+- **A beneficiary portal and e-signatures.** Not in the free version.
+- **A phone app.** It runs where your coding agent runs.
 
-## Who this fits
-
-Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your team needs a screen to look at all day, keep Estateably. If you need the answers more than the screens, this is cheaper, faster and yours.
-
-Installed and run for you: https://enterprisedna.co/omni/instead-of/estateably
+Enterprise DNA builds the parts your practice needs into your version, including a web front end if you want one.
